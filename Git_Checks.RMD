@@ -23,6 +23,8 @@ Check to make sure that you Terminal is using Git Bash by doing the following:
   
   - Select 'Tools' > 'Global Options' > 'Terminal'
   - New terminals open with: 'Git Bash'
+  
+The terminal should list the directory it is active in. If you open RStudio by opening `Project.Rproj` then you the terminal should have the directory that your ST563 group project repo is saved in. If not, then close RStudio and open the aforementioned file. 
 
 *If you do not see that option, then you might not have Git Bash installed.*
 
