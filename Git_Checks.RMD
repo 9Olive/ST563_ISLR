@@ -1,0 +1,46 @@
+---
+---
+
+If you're reading this script on your computer, then that means you've succesfully cloned the repo.
+Now see if you can make a change and push an update.
+
+
+First, make a change:
+Have you cloned the repo?
+
+```{r}
+Joseph <- TRUE
+Lauren <- FALSE
+Saara  <- FALSE
+Yiting <- FALSE
+```
+
+
+It is typically easiest to use Git from the command line.
+You should have a 'terminal' tab near the 'console' tab in RStudio
+
+Check to make sure that you Terminal is using Git Bash by doing the following:
+  
+  - Select 'Tools' > 'Global Options' > 'Terminal'
+  - New terminals open with: 'Git Bash'
+
+*If you do not see that option, then you might not have Git Bash installed.*
+
+From the terminal, you can use the following commands:
+
+  - git add .
+    - This will queue up the changes you've made
+  
+  - git commit -m "{comment}"
+    - This will commit the changes you've made. Insert a description where {comment} is.
+    
+  - git push origin master
+    - This will push your changes to the repository for everyone else to see!
+    
+  - git pull
+    - This will pull the latest available version of the repo
+    
+  - git reset --hard
+    - If you are having issues with file changes, or you are unable to pull the latest update/commit you're changes, then run this commande. *Should be a last resort*.
+
+Any questions? Feel free to ask me, Joseph! 
