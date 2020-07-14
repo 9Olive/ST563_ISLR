@@ -1,24 +1,6 @@
 ---
 ---
 
-If you're reading this script on your computer, then that means you've succesfully cloned the repo.
-Now see if you can make a change and push an update.
-
-
-First, make a change:
-Have you cloned the repo?
-
-```{r}
-Joseph <- TRUE
-Lauren <- FALSE
-Saara  <- FALSE
-Yiting <- FALSE
-```
-
-
-It is typically easiest to use Git from the command line.
-You should have a 'terminal' tab near the 'console' tab in RStudio
-
 Check to make sure that you Terminal is using Git Bash by doing the following:
   
   - Select 'Tools' > 'Global Options' > 'Terminal'
