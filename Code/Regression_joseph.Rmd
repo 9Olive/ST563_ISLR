@@ -10,6 +10,111 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ```{r}
+library(xgboost)
+library(tidyverse)
+library(tree)
+library(leaps)
+set.seed(5)
+```
+
+```{r}
+wine_train <- read_csv('../Data/Clean/wine_train.csv') %>%
+  rename('fixed_acidity' = `fixed acidity`,
+         'vol_acidity' = `volatile acidity`,
+         'citric_acid' = `citric acid`,
+         'resid_sugar' = `residual sugar`,
+         'free_SO2' = `free sulfur dioxide`,
+         'tot_SO2' = `total sulfur dioxide`)
+wine_test <- read_csv('../Data/Clean/wine_test.csv') %>%
+  rename('fixed_acidity' = `fixed acidity`,
+         'vol_acidity' = `volatile acidity`,
+         'citric_acid' = `citric acid`,
+         'resid_sugar' = `residual sugar`,
+         'free_SO2' = `free sulfur dioxide`,
+         'tot_SO2' = `total sulfur dioxide`)
+```
+
+#### tree model approach
+
+```{r}
+wine_tree_reg <- tree(quality  ~ ., data = wine_train)
+wine_tree_cv <- cv.tree(wine_tree_reg, FUN = prune.tree)
+
+plot(wine_tree_cv$size, wine_tree_cv$dev, type = 'b')
+```
+
+Going with a depth of 5 max for a boosted tree approach. 
+
+```{r}
+wine_train_mat <- wine_train %>%
+  select(-quality) %>%
+  as.matrix()
+
+wine_test_mat <- wine_test %>%
+  select(-quality) %>%
+  as.matrix()
+
+wine_tree_bst <- xgboost(data = wine_train_mat,
+                                label = wine_train$quality,
+                                max.depth = 5,
+                                eta = 0.1,
+                                nrounds = 100,
+                                objective = "reg:squarederror")
+```
+
+```{r}
+pred_bst <- predict(wine_tree_bst, wine_test_mat)
+
+mse_bst <- mean((pred_bst - wine_test$quality)^2)
+misclas_bst <- 1 - mean(round(pred_bst) == wine_test$quality)
+```
+
+Boosted model test MSE: `r mse_bst`
+Rounding the predicted scores, the boosted misclassification rate: `r misclas_bst`
+
+#### linear regression
+
+```{r}
+wine_lm <- lm(quality ~ ., data = wine_train)
+pred_lm <- predict(wine_lm, select(wine_test, -quality))
+mse_lm  <- mean((pred_lm - wine_test$quality)^2)
+misclas_lm <- 1 - mean(round(pred_lm) == wine_test$quality)
+```
+
+LM model test MSE: `r mse_lm`
+Rounding the predicted scores, the linear model misclassification rate: `r misclas_lm`
+
+```{r}
+wine_lm_full <- regsubsets(quality ~ ., data = wine_train, nvmax = 10)
+summary(wine_lm_full)
+```
+
+Among the variables, `alcohol`, `vol_acidity`, `sulphates`, `total sulphur dioxide`, and `chlorides` are the top predictors in the selection process.
+
+```{r}
+wine_lm_fwd <- regsubsets(quality ~ ., data = wine_train, nvmax = 5, method = "forward")
+summary(wine_lm_fwd)
+```
+
+The same 5 variables are selected in forward selection and backward selection. 
+
+```{r}
+wine_lm_bwd <- regsubsets(quality ~ ., data = wine_train, nvmax = 5, method = "backward")
+summary(wine_lm_bwd)
+```
+
+```{r}
+wine_lm_five <- lm(quality ~ alcohol + vol_acidity + 
+                sulphates + tot_SO2 + chlorides, data = wine_train)
+pred_lm_five <- predict(wine_lm_five, select(wine_test, -quality))
+mse_lm_five  <- mean((pred_lm_five - wine_test$quality)^2)
+misclas_lm_five <- 1 - mean(round(pred_lm_five) == wine_test$quality)
+```
+
+Boosted model test MSE: `r mse_lm_five`
+Rounding the predicted scores, the boosted misclassification rate: `r misclas_lm_five`
+
+```{r}
 
 ```
 
